@@ -3,44 +3,72 @@ package com.example.havanasiapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.havanasiapp.domain.model.WeatherLocation
+import com.example.havanasiapp.presentation.home.HomeScreen
+import com.example.havanasiapp.presentation.home.HomeUIEvent
+import com.example.havanasiapp.presentation.home.HomeViewModel
 import com.example.havanasiapp.ui.theme.HavaNasiAppTheme
+import com.example.havanasiapp.util.Screen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             HavaNasiAppTheme (dynamicColor = false){
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
 
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.HomeScreen.route
+                ) {
+                    composable(route = Screen.HomeScreen.route) {
+
+                        val homeViewModel: HomeViewModel = hiltViewModel()
+                        val homeUIState = homeViewModel.state.value
+                        val homeResponseEvents = homeViewModel.responseEvents
+
+                        HomeScreen(
+                            screenState = homeUIState.screenState,
+                            isAddNewCityDialogVisible = homeUIState.isAddCityDialogVisible,
+                            cityToAddName = homeUIState.cityToAddName,
+                            weatherLocations = homeUIState.weatherLocations,
+                            onCityToAddChange = { cityToAddName: String ->
+
+                                homeViewModel.onEvent(HomeUIEvent.SetCityToAddName(cityToAddName=cityToAddName))
+
+                            },
+                            onClickDelete = {weatherLocation: WeatherLocation ->
+                                homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = weatherLocation.city))
+
+                            },
+                            onSubmitNewCity = {
+                                homeViewModel.onEvent(HomeUIEvent.AddNewCity)
+                                              },
+                            onFloatingButtonClicked = {
+                                homeViewModel.onEvent(HomeUIEvent.ToggleAddCityDialog(isVisible = true))
+                                                      },
+                            onDismissDialogRequest = {
+                                homeViewModel.onEvent(HomeUIEvent.ToggleAddCityDialog(isVisible = false))
+                                                     },
+                            onRetry = {
+                                homeViewModel.onEvent(HomeUIEvent.Retry)
+
+                            }
+                        )
+
+
+
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HavaNasiAppTheme (dynamicColor = false){
-        Greeting("Android")
     }
 }

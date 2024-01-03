@@ -1,17 +1,23 @@
 package com.example.havanasiapp.presentation.home.components
 
-import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -34,12 +41,16 @@ import com.example.havanasiapp.ui.theme.HavaNasiAppTheme
 fun WeatherLocationsLazyComponent(
     weatherLocations: List<WeatherLocation>,
     modifier: Modifier = Modifier,
+    onClickDelete: (WeatherLocation) -> Unit,
 ){
 
     LazyColumn {
         items(weatherLocations) {weatherLocation: WeatherLocation ->
 
-            WeatherLocationCard(weatherLocation)
+            WeatherLocationCard(
+                weatherLocation = weatherLocation,
+                onClickDelete = onClickDelete
+                )
         }
     }
 
@@ -49,52 +60,85 @@ fun WeatherLocationsLazyComponent(
 fun WeatherLocationCard(
     weatherLocation: WeatherLocation,
     modifier: Modifier = Modifier,
+    onClickDelete: (WeatherLocation) -> Unit,
 ) {
 
-    Column(
+    Card(
         modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer
-            )
-            .clip(RoundedCornerShape(size = 8.dp))
+            .padding(16.dp)
+            .clip(RoundedCornerShape(size = 8.dp)),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            contentColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
 
-        Row (
+        Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(2.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ){
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ){
-
-                NormalTextComponent(
-                    value = weatherLocation.city
-                )
-                NormalTextComponent(
-                    value = weatherLocation.country,
-                    fontSize = 16
-                )
-            }
-
-            Row (
+            Row(
+                modifier = modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
 
-                WeatherIconCard(
-                    photoSrc = weatherLocation.currentWeather.icon
-                )
+                    NormalTextComponent(
+                        value = weatherLocation.city,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    NormalTextComponent(
+                        value = weatherLocation.country,
+                        fontSize = 16,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
 
-                NormalTextComponent(
-                    value = "${weatherLocation.currentWeather.temperatureCelcius} °C",
-                    fontSize = 16
-                )
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    WeatherIconCard(
+                        photoSrc = weatherLocation.currentWeather.icon
+                    )
+
+                    NormalTextComponent(
+                        value = "${weatherLocation.currentWeather.temperatureCelcius} °C",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
 
 
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column {
+
+                    IconButton(
+                        modifier = Modifier.size(34.dp),
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(34.dp),
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete city",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        
+                    }
+                }
             }
         }
 
@@ -105,9 +149,7 @@ fun WeatherLocationCard(
 fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.primaryContainer
-        )
+
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current).data(photoSrc)
@@ -116,7 +158,7 @@ fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
             placeholder = painterResource(R.drawable.image_holder),
             contentDescription = stringResource(R.string.weather_icon),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(64.dp)
         )
     }
 }
@@ -127,6 +169,7 @@ fun LocationCardPreview() {
     HavaNasiAppTheme (dynamicColor = false){
 
         WeatherLocationsLazyComponent(
+            onClickDelete = {},
             weatherLocations = listOf(
                 WeatherLocation(
                     city = "Ankara",

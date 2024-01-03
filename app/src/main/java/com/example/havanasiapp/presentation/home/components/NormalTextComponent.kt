@@ -18,6 +18,7 @@ fun NormalTextComponent(
     modifier: Modifier = Modifier,
     value: String,
     fontSize: Int = 24,
+    fontWeight: FontWeight = FontWeight.Normal,
     textAlign: TextAlign = TextAlign.Center,
     color: Color = MaterialTheme.colorScheme.onBackground
 ) {
@@ -26,7 +27,7 @@ fun NormalTextComponent(
         modifier = Modifier,
         style = TextStyle(
             fontSize = fontSize.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = fontWeight,
             fontStyle = FontStyle.Normal,
         ),
         color = MaterialTheme.colorScheme.onBackground,
