@@ -7,7 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.havanasiapp.domain.model.WeatherLocation
+import com.example.havanasiapp.domain.model.response.CurrentWeather
 import com.example.havanasiapp.presentation.home.HomeScreen
 import com.example.havanasiapp.presentation.home.HomeUIEvent
 import com.example.havanasiapp.presentation.home.HomeViewModel
@@ -39,14 +39,14 @@ class MainActivity : ComponentActivity() {
                             screenState = homeUIState.screenState,
                             isAddNewCityDialogVisible = homeUIState.isAddCityDialogVisible,
                             cityToAddName = homeUIState.cityToAddName,
-                            weatherLocations = homeUIState.weatherLocations,
+                            currentWeatherList = homeUIState.currentWeatherList,
                             onCityToAddChange = { cityToAddName: String ->
 
                                 homeViewModel.onEvent(HomeUIEvent.SetCityToAddName(cityToAddName=cityToAddName))
 
                             },
-                            onClickDelete = {weatherLocation: WeatherLocation ->
-                                homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = weatherLocation.city))
+                            onClickDelete = {currentWeather: CurrentWeather -> // todo bak bi
+                                homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = currentWeather.location.region))
 
                             },
                             onSubmitNewCity = {

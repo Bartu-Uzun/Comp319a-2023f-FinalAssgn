@@ -2,24 +2,26 @@ package com.example.havanasiapp.presentation.home
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.havanasiapp.data.local.repository.ICityRepository
+import com.example.havanasiapp.data.remote.repository.IWeatherRepository
 import com.example.havanasiapp.domain.model.City
+import com.example.havanasiapp.domain.model.response.CurrentWeather
 import com.example.havanasiapp.presentation.util.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val cityRepository: ICityRepository,
-    savedStateHandle: SavedStateHandle
+    private val weatherRepository: IWeatherRepository,
 ): ViewModel() {
 
     private val _state = mutableStateOf(HomeUIState())
@@ -36,24 +38,42 @@ class HomeViewModel @Inject constructor(
 
         // roomdb'den city isimlerini çek
         viewModelScope.launch (Dispatchers.IO){
-            val cityList: List<String> = convertToListOfString(cityRepository.getAllCities())
+            try {
+                val cityNameList: List<String> =
+                    convertToListOfString(cityRepository.getAllCities())
 
-            // TODO apiden current location'ın bilgisini çek
+                val currentWeatherList: MutableList<CurrentWeather> = mutableListOf()
 
-            // TODO apiden citylerin bilgisini çek (try block içinde)
+                // TODO apiden current location'ın bilgisini çek
 
-            _state.value = state.value.copy( // TODO FOR NOW
-                cityList = cityList,
-                isAddCityDialogVisible = false,
-                screenState = ScreenState.Success
-            )
+
+                // TODO apiden citylerin bilgisini çek
+                cityNameList.forEach { cityName: String ->
+
+                    val currentWeather: CurrentWeather = weatherRepository.getCurrentWeatherOfCity(cityName)
+
+                    currentWeatherList.add(currentWeather)
+                }
+
+                _state.value = state.value.copy( // TODO FOR NOW
+                    currentWeatherList = currentWeatherList.toList(),
+                    cityNameList = cityNameList,
+                    isAddCityDialogVisible = false,
+                    screenState = ScreenState.Success
+                )
+
+            } catch (e: IOException) {
+
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+            } catch (e: HttpException) {
+
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+            }
         }
-
-
-
-
-
-
     }
 
 
@@ -66,18 +86,14 @@ class HomeViewModel @Inject constructor(
                 // add event.cityName to room db if cityname is not empty
                 if (state.value.cityToAddName.isNotEmpty()){
 
-                    viewModelScope.launch (Dispatchers.IO){
-                        cityRepository.insertCity(
-                            City(state.value.cityToAddName)
-                        )
+                    val cityToAdd = City(state.value.cityToAddName)
 
-                        setContent()
-                    }
+                    addCity(cityToAdd)
 
 
                 }
             }
-            is HomeUIEvent.DeleteCity -> {
+            is HomeUIEvent.DeleteCity -> { // TODO
 
                 // remove event.cityName from room db
                 viewModelScope.launch (Dispatchers.IO){
@@ -87,15 +103,13 @@ class HomeViewModel @Inject constructor(
 
                     setContent()
                 }
-
-
             }
             is HomeUIEvent.ShowDetails -> {
 
                 // todo subscribe to the channel in ui
                 viewModelScope.launch{
                     responseEventChannel.send(
-                        ResponseEvent.NavigateToDetailScreen(cityName = event.weatherLocation.city)
+                        ResponseEvent.NavigateToDetailScreen(cityName = event.currentWeather.location.region)
                     )
                 }
             }
@@ -120,6 +134,47 @@ class HomeViewModel @Inject constructor(
                 setContent()
             }
         }
+    }
+
+    private fun addCity(newCity: City) {
+
+
+
+
+        viewModelScope.launch (Dispatchers.IO) {
+
+            try {// add to roomdb
+                cityRepository.insertCity(
+                    newCity
+                )
+                // add cityName to state's cityNameList
+                // get weather info, add it to state's currentWeatherList
+                val newCurrentWeather = weatherRepository.getCurrentWeatherOfCity(newCity.name)
+
+                val cityNameList = state.value.cityNameList.toMutableList()
+                val currentWeatherList = state.value.currentWeatherList.toMutableList()
+                currentWeatherList.add(newCurrentWeather)
+                cityNameList.add(newCity.name)
+
+                _state.value = state.value.copy(
+                    currentWeatherList = currentWeatherList.toList(),
+                    cityNameList = cityNameList.toList()
+                )
+            }  catch (e: IOException) {
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+
+            } catch (e: HttpException) {
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+
+            }
+
+
+        }
+
     }
 
 

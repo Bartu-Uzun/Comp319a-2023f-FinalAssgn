@@ -31,8 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.havanasiapp.R
-import com.example.havanasiapp.domain.model.Weather
-import com.example.havanasiapp.domain.model.WeatherLocation
+import com.example.havanasiapp.domain.model.response.CurrentWeather
 import com.example.havanasiapp.presentation.home.components.AddNewCityDialogComponent
 import com.example.havanasiapp.presentation.home.components.NormalTextComponent
 import com.example.havanasiapp.presentation.home.components.WeatherLocationsLazyComponent
@@ -44,9 +43,9 @@ fun HomeScreen(
     screenState: ScreenState,
     isAddNewCityDialogVisible: Boolean,
     cityToAddName: String,
-    weatherLocations: List<WeatherLocation>,
+    currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
-    onClickDelete: (WeatherLocation) -> Unit,
+    onClickDelete: (CurrentWeather) -> Unit,
     onSubmitNewCity: () -> Unit,
     onFloatingButtonClicked: () -> Unit,
     onDismissDialogRequest: () -> Unit,
@@ -70,7 +69,7 @@ fun HomeScreen(
             SuccessScreen(
                 isAddNewCityDialogVisible = isAddNewCityDialogVisible,
                 cityToAddName = cityToAddName,
-                weatherLocations = weatherLocations,
+                currentWeatherList = currentWeatherList,
                 onCityToAddChange = onCityToAddChange,
                 onClickDelete = onClickDelete,
                 onSubmitNewCity = onSubmitNewCity,
@@ -209,9 +208,9 @@ fun LoadingScreen() {
 fun SuccessScreen(
     isAddNewCityDialogVisible: Boolean,
     cityToAddName: String,
-    weatherLocations: List<WeatherLocation>,
+    currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
-    onClickDelete: (WeatherLocation) -> Unit,
+    onClickDelete: (CurrentWeather) -> Unit,
     onSubmitNewCity: () -> Unit,
     onFloatingButtonClicked: () -> Unit,
     onDismissDialogRequest: () -> Unit,
@@ -270,7 +269,7 @@ fun SuccessScreen(
 
             Column {
                 WeatherLocationsLazyComponent(
-                    weatherLocations = weatherLocations,
+                    currentWeatherList = currentWeatherList,
                     onClickDelete = onClickDelete
                 )
 
@@ -308,31 +307,7 @@ fun SuccessScreenPreview() {
             onDismissDialogRequest = {},
             onCityToAddChange = {str ->},
             onSubmitNewCity = {},
-            weatherLocations = listOf(
-                WeatherLocation(
-                    city = "Ankara",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 10.0f,
-                        description = "Partly cloudy",
-                        humidity = 82,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                ),
-                WeatherLocation(
-                    city = "Istanbul",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 15.5f,
-                        description = "Sunny",
-                        humidity = 80,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                )
-
-            )
+            currentWeatherList = listOf(),
         )
     }
 }
@@ -353,31 +328,7 @@ fun LoadingScreenPreview() {
             onDismissDialogRequest = {},
             onCityToAddChange = {str ->},
             onSubmitNewCity = {},
-            weatherLocations = listOf(
-                WeatherLocation(
-                    city = "Ankara",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 10.0f,
-                        description = "Partly cloudy",
-                        humidity = 82,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                ),
-                WeatherLocation(
-                    city = "Istanbul",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 15.5f,
-                        description = "Sunny",
-                        humidity = 80,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                )
-
-            )
+            currentWeatherList = listOf(),
         )
     }
 }

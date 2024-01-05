@@ -1,6 +1,7 @@
 package com.example.havanasiapp.presentation.home.components
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,22 +34,21 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.havanasiapp.R
-import com.example.havanasiapp.domain.model.Weather
-import com.example.havanasiapp.domain.model.WeatherLocation
+import com.example.havanasiapp.domain.model.response.CurrentWeather
 import com.example.havanasiapp.ui.theme.HavaNasiAppTheme
 
 @Composable
 fun WeatherLocationsLazyComponent(
-    weatherLocations: List<WeatherLocation>,
+    currentWeatherList: List<CurrentWeather>,
     modifier: Modifier = Modifier,
-    onClickDelete: (WeatherLocation) -> Unit,
+    onClickDelete: (CurrentWeather) -> Unit,
 ){
 
     LazyColumn {
-        items(weatherLocations) {weatherLocation: WeatherLocation ->
+        items(currentWeatherList) {currentWeather: CurrentWeather ->
 
-            WeatherLocationCard(
-                weatherLocation = weatherLocation,
+            currentWeatherCard(
+                currentWeather = currentWeather,
                 onClickDelete = onClickDelete
                 )
         }
@@ -57,10 +57,10 @@ fun WeatherLocationsLazyComponent(
 }
 
 @Composable
-fun WeatherLocationCard(
-    weatherLocation: WeatherLocation,
+fun currentWeatherCard(
+    currentWeather: CurrentWeather,
     modifier: Modifier = Modifier,
-    onClickDelete: (WeatherLocation) -> Unit,
+    onClickDelete: (CurrentWeather) -> Unit,
 ) {
 
     Card(
@@ -91,12 +91,12 @@ fun WeatherLocationCard(
                 ) {
 
                     NormalTextComponent(
-                        value = weatherLocation.city,
+                        value = currentWeather.location.region,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     NormalTextComponent(
-                        value = weatherLocation.country,
+                        value = currentWeather.location.country,
                         fontSize = 16,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -109,11 +109,11 @@ fun WeatherLocationCard(
                 ) {
 
                     WeatherIconCard(
-                        photoSrc = weatherLocation.currentWeather.icon
+                        photoSrc = currentWeather.current.condition.icon
                     )
 
                     NormalTextComponent(
-                        value = "${weatherLocation.currentWeather.temperatureCelcius} °C",
+                        value = "${currentWeather.current.temp_c} °C",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -128,7 +128,7 @@ fun WeatherLocationCard(
 
                     IconButton(
                         modifier = Modifier.size(34.dp),
-                        onClick = { /*TODO*/ }
+                        onClick = { onClickDelete(currentWeather) }
                     ) {
                         Icon(
                             modifier = Modifier.size(34.dp),
@@ -151,8 +151,11 @@ fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
         modifier = modifier,
 
     ) {
+
+        val TAG = "WeatherIconCard"
+        Log.d(TAG, "photoSrc: $photoSrc")
         AsyncImage(
-            model = ImageRequest.Builder(context = LocalContext.current).data(photoSrc)
+            model = ImageRequest.Builder(context = LocalContext.current).data("https:$photoSrc")
                 .crossfade(true).build(),
             error = painterResource(R.drawable.broken_image),
             placeholder = painterResource(R.drawable.image_holder),
@@ -170,31 +173,7 @@ fun LocationCardPreview() {
 
         WeatherLocationsLazyComponent(
             onClickDelete = {},
-            weatherLocations = listOf(
-                WeatherLocation(
-                    city = "Ankara",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 10.0f,
-                        description = "Partly cloudy",
-                        humidity = 82,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                ),
-                WeatherLocation(
-                    city = "Istanbul",
-                    country = "Turkey",
-                    currentWeather = Weather(
-                        temperatureCelcius = 15.5f,
-                        description = "Sunny",
-                        humidity = 80,
-                        icon = "//cdn.weatherapi.com/weather/64x64/day/116.png",
-                        windMph = 10.5f
-                    )
-                )
-
-            )
+            currentWeatherList = listOf(),
         )
     }
 }
