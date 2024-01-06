@@ -1,5 +1,6 @@
 package com.example.havanasiapp.presentation.home
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -93,7 +94,7 @@ class HomeViewModel @Inject constructor(
 
                 }
             }
-            is HomeUIEvent.DeleteCity -> { // TODO
+            is HomeUIEvent.DeleteCity -> {
 
                 // remove event.cityName from room db
                 viewModelScope.launch (Dispatchers.IO){
@@ -101,7 +102,7 @@ class HomeViewModel @Inject constructor(
                         City(event.cityName)
                     )
 
-                    setContent()
+                    deleteCity(event.cityName)
                 }
             }
             is HomeUIEvent.ShowDetails -> {
@@ -116,7 +117,11 @@ class HomeViewModel @Inject constructor(
             is HomeUIEvent.ToggleAddCityDialog -> {
 
                 _state.value = state.value.copy(
-                    isAddCityDialogVisible = event.isVisible
+                    isAddCityDialogVisible = event.isVisible,
+                    cityToAddName = "",
+                    isConnectionError = false,
+                    isAddingNameError = false,
+                    addingErrorMessage = ""
                 )
             }
 
@@ -136,6 +141,48 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun deleteCity(cityToDelete: String) {
+
+        viewModelScope.launch {
+            try {
+
+                // delete from roomdb
+                cityRepository.deleteCity(
+                    City(cityToDelete)
+                )
+
+                // update ui lists
+                val currentWeatherList = state.value.currentWeatherList
+                    .toMutableList()
+                    .filter { currentWeather: CurrentWeather ->
+                        currentWeather.location.name != cityToDelete
+                    }
+
+                val cityNameList = state.value.cityNameList.toMutableList()
+                cityNameList.remove(cityToDelete)
+
+                //update ui state
+                _state.value = state.value.copy(
+                    currentWeatherList = currentWeatherList.toList(),
+                    cityNameList = cityNameList.toList()
+                )
+
+
+            } catch (e: IOException) {
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+
+            } catch (e: HttpException) {
+                _state.value = state.value.copy(
+                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                )
+
+            }
+        }
+
+    }
+
     private fun addCity(newCity: City) {
 
 
@@ -143,13 +190,17 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch (Dispatchers.IO) {
 
-            try {// add to roomdb
-                cityRepository.insertCity(
-                    newCity
-                )
+            try {
+
+
                 // add cityName to state's cityNameList
                 // get weather info, add it to state's currentWeatherList
                 val newCurrentWeather = weatherRepository.getCurrentWeatherOfCity(newCity.name)
+
+                // add to roomdb
+                cityRepository.insertCity(
+                    newCity
+                )
 
                 val cityNameList = state.value.cityNameList.toMutableList()
                 val currentWeatherList = state.value.currentWeatherList.toMutableList()
@@ -158,16 +209,32 @@ class HomeViewModel @Inject constructor(
 
                 _state.value = state.value.copy(
                     currentWeatherList = currentWeatherList.toList(),
-                    cityNameList = cityNameList.toList()
+                    cityNameList = cityNameList.toList(),
+                    isAddCityDialogVisible = false,
+                    isAddingNameError = false,
+                    isConnectionError = false,
+                    addingErrorMessage = "",
+                    cityToAddName = "",
                 )
             }  catch (e: IOException) {
                 _state.value = state.value.copy(
-                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                    isAddingNameError = false,
+                    isConnectionError = true,
+                    addingErrorMessage = "Internet Connection Error"
                 )
 
             } catch (e: HttpException) {
                 _state.value = state.value.copy(
-                    screenState = ScreenState.Error(message = e.message ?: "Error")
+                    isAddingNameError = true,
+                    isConnectionError = false,
+                    addingErrorMessage = "No matching location found with the name: ${newCity.name}."
+                )
+
+            } catch (e: SQLiteConstraintException) {
+                _state.value = state.value.copy(
+                    isAddingNameError = true,
+                    isConnectionError = false,
+                    addingErrorMessage = "City ${newCity.name} already exists."
                 )
 
             }

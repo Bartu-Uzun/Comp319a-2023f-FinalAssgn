@@ -43,6 +43,9 @@ fun HomeScreen(
     screenState: ScreenState,
     isAddNewCityDialogVisible: Boolean,
     cityToAddName: String,
+    addingErrorMessage: String,
+    isAddingNameError: Boolean,
+    isConnectionError: Boolean,
     currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
     onClickDelete: (CurrentWeather) -> Unit,
@@ -75,6 +78,9 @@ fun HomeScreen(
                 onSubmitNewCity = onSubmitNewCity,
                 onFloatingButtonClicked = onFloatingButtonClicked,
                 onDismissDialogRequest = onDismissDialogRequest,
+                addingErrorMessage = addingErrorMessage,
+                isAddingNameError = isAddingNameError,
+                isConnectionError = isConnectionError
             )
         }
     }
@@ -208,6 +214,9 @@ fun LoadingScreen() {
 fun SuccessScreen(
     isAddNewCityDialogVisible: Boolean,
     cityToAddName: String,
+    addingErrorMessage: String,
+    isAddingNameError: Boolean,
+    isConnectionError: Boolean,
     currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
     onClickDelete: (CurrentWeather) -> Unit,
@@ -279,6 +288,9 @@ fun SuccessScreen(
                         onSubmitNewCity = onSubmitNewCity,
                         onCityToAddChange = onCityToAddChange,
                         onDismissRequest = onDismissDialogRequest,
+                        addingErrorMessage = addingErrorMessage,
+                        isAddingNameError = isAddingNameError,
+                        isConnectionError = isConnectionError,
 
                     )
                 }
@@ -308,6 +320,9 @@ fun SuccessScreenPreview() {
             onCityToAddChange = {str ->},
             onSubmitNewCity = {},
             currentWeatherList = listOf(),
+            addingErrorMessage = "",
+            isAddingNameError = false,
+            isConnectionError = false,
         )
     }
 }
@@ -329,6 +344,10 @@ fun LoadingScreenPreview() {
             onCityToAddChange = {str ->},
             onSubmitNewCity = {},
             currentWeatherList = listOf(),
+            addingErrorMessage = "",
+            isAddingNameError = false,
+            isConnectionError = false,
+
         )
     }
 }

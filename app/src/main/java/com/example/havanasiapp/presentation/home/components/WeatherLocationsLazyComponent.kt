@@ -86,18 +86,22 @@ fun currentWeatherCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 72.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+
                 ) {
 
                     NormalTextComponent(
-                        value = currentWeather.location.region,
+                        value = currentWeather.location.name,
                         fontWeight = FontWeight.Bold,
+                        fontSize = 18,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     NormalTextComponent(
                         value = currentWeather.location.country,
-                        fontSize = 16,
+                        fontSize = 14,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
@@ -152,8 +156,6 @@ fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
 
     ) {
 
-        val TAG = "WeatherIconCard"
-        Log.d(TAG, "photoSrc: $photoSrc")
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current).data("https:$photoSrc")
                 .crossfade(true).build(),

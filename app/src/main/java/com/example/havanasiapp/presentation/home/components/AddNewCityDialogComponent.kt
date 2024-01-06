@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
@@ -37,6 +38,9 @@ import com.example.havanasiapp.R
 fun AddNewCityDialogComponent(
     modifier: Modifier = Modifier,
     cityToAddName: String,
+    addingErrorMessage: String,
+    isAddingNameError: Boolean,
+    isConnectionError: Boolean,
     onSubmitNewCity: () -> Unit,
     onCityToAddChange: (String) -> Unit,
     onDismissRequest: () -> Unit,
@@ -50,7 +54,13 @@ fun AddNewCityDialogComponent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp)
+                .height(
+                    if (isAddingNameError || isConnectionError){
+                        250.dp
+                    } else {
+                        250.dp
+                    }
+                )
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
@@ -62,7 +72,7 @@ fun AddNewCityDialogComponent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(12.dp),
-                verticalArrangement = Arrangement.Bottom,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ){
                 Spacer(modifier = Modifier.height(8.dp))
@@ -94,6 +104,21 @@ fun AddNewCityDialogComponent(
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 )
+
+                if (isAddingNameError) {
+                    NormalTextComponent(
+                        fontSize = 16,
+                        value = addingErrorMessage,
+                        color = Color.Red // TODO MATERIALTHEME.COLORSCHEME.ERROR
+                    )
+                }
+                else if (isConnectionError) {
+                    NormalTextComponent(
+                        fontSize = 16,
+                        value = addingErrorMessage,
+                        color = Color.Red // TODO MATERIALTHEME.COLORSCHEME.ERROR
+                    )
+                }
 
                 Row (
                     modifier = Modifier

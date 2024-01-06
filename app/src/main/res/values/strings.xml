@@ -3,4 +3,6 @@
     <string name="weather_icon">Weather icon</string>
     <string name="dismiss">Dismiss</string>
     <string name="confirm">Confirm</string>
+    <string name="location_not_found">Location not found</string>
+    <string name="connection_error">Cannot connect to the internet</string>
 </resources>

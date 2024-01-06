@@ -40,13 +40,16 @@ class MainActivity : ComponentActivity() {
                             isAddNewCityDialogVisible = homeUIState.isAddCityDialogVisible,
                             cityToAddName = homeUIState.cityToAddName,
                             currentWeatherList = homeUIState.currentWeatherList,
+                            isAddingNameError = homeUIState.isAddingNameError,
+                            isConnectionError = homeUIState.isConnectionError,
+                            addingErrorMessage = homeUIState.addingErrorMessage,
                             onCityToAddChange = { cityToAddName: String ->
 
                                 homeViewModel.onEvent(HomeUIEvent.SetCityToAddName(cityToAddName=cityToAddName))
 
                             },
-                            onClickDelete = {currentWeather: CurrentWeather -> // todo bak bi
-                                homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = currentWeather.location.region))
+                            onClickDelete = {currentWeather: CurrentWeather ->
+                                homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = currentWeather.location.name))
 
                             },
                             onSubmitNewCity = {
