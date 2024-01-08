@@ -16,7 +16,6 @@ interface WeatherApiService {
 
     @GET("forecast.json")
     suspend fun getWeatherForecastOfCity(
-        @Query("key") key: String,
         @Query("q") city: String,
         @Query("days") days: Int,
     ): WeatherForecast

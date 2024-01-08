@@ -11,7 +11,7 @@ data class HomeUIState(
     val screenState: ScreenState = ScreenState.Loading,
     val cityNameList: List<String> = listOf(),
     val currentWeatherList: List<CurrentWeather> = listOf(),
-    val cityToAddName: String = "", // todo what happens if this name just does not exist in the world?
+    val cityToAddName: String = "",
     val isAddCityDialogVisible: Boolean = false,
     val addingErrorMessage: String = "",
     val isAddingNameError: Boolean = false,

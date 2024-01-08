@@ -1,7 +1,8 @@
 package com.example.havanasiapp.presentation.home.components
 
 
-import android.util.Log
+
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ fun WeatherLocationsLazyComponent(
     currentWeatherList: List<CurrentWeather>,
     modifier: Modifier = Modifier,
     onClickDelete: (CurrentWeather) -> Unit,
+    onClickWeatherCard: (CurrentWeather) -> Unit,
 ){
 
     LazyColumn {
@@ -49,7 +51,8 @@ fun WeatherLocationsLazyComponent(
 
             currentWeatherCard(
                 currentWeather = currentWeather,
-                onClickDelete = onClickDelete
+                onClickDelete = onClickDelete,
+                onClickWeatherCard = onClickWeatherCard,
                 )
         }
     }
@@ -61,12 +64,18 @@ fun currentWeatherCard(
     currentWeather: CurrentWeather,
     modifier: Modifier = Modifier,
     onClickDelete: (CurrentWeather) -> Unit,
+    onClickWeatherCard: (CurrentWeather) -> Unit,
 ) {
 
     Card(
         modifier = modifier
             .padding(16.dp)
-            .clip(RoundedCornerShape(size = 8.dp)),
+            .clip(RoundedCornerShape(size = 8.dp))
+            .clickable(
+                onClick = {
+                    onClickWeatherCard(currentWeather)
+                }
+            ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             contentColor = MaterialTheme.colorScheme.primaryContainer
@@ -176,6 +185,7 @@ fun LocationCardPreview() {
         WeatherLocationsLazyComponent(
             onClickDelete = {},
             currentWeatherList = listOf(),
+            onClickWeatherCard = {}
         )
     }
 }

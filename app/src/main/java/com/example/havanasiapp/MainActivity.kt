@@ -4,10 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.havanasiapp.domain.model.response.CurrentWeather
+import com.example.havanasiapp.presentation.detail.DetailScreen
+import com.example.havanasiapp.presentation.detail.DetailUIEvent
+import com.example.havanasiapp.presentation.detail.DetailViewModel
 import com.example.havanasiapp.presentation.home.HomeScreen
 import com.example.havanasiapp.presentation.home.HomeUIEvent
 import com.example.havanasiapp.presentation.home.HomeViewModel
@@ -37,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
                         HomeScreen(
                             screenState = homeUIState.screenState,
+                            responseEvents = homeResponseEvents,
                             isAddNewCityDialogVisible = homeUIState.isAddCityDialogVisible,
                             cityToAddName = homeUIState.cityToAddName,
                             currentWeatherList = homeUIState.currentWeatherList,
@@ -52,6 +58,9 @@ class MainActivity : ComponentActivity() {
                                 homeViewModel.onEvent(HomeUIEvent.DeleteCity(cityName = currentWeather.location.name))
 
                             },
+                            onClickWeatherCard = {currentWeather: CurrentWeather ->
+                                homeViewModel.onEvent(HomeUIEvent.ShowDetails(currentWeather = currentWeather))
+                            },
                             onSubmitNewCity = {
                                 homeViewModel.onEvent(HomeUIEvent.AddNewCity)
                                               },
@@ -64,10 +73,37 @@ class MainActivity : ComponentActivity() {
                             onRetry = {
                                 homeViewModel.onEvent(HomeUIEvent.Retry)
 
+                            },
+                            onNavigateToDetailScreen = {location: String ->
+                                navController.navigate(Screen.DetailScreen.route + "/$location")
                             }
                         )
 
+                    }
 
+                    composable(
+                        route = Screen.DetailScreen.route + "/{location}",
+                        arguments = listOf(
+                            navArgument(name = "location") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                        )
+                    ) {
+
+                        val detailViewModel: DetailViewModel = hiltViewModel()
+                        val detailUIState = detailViewModel.state.value
+
+                        DetailScreen(
+                            screenState = detailUIState.screenState,
+                            weatherForecast = detailUIState.weatherForecast,
+                            onRetry = {
+                                detailViewModel.onEvent(DetailUIEvent.Retry)
+                                      },
+                            onClickBackButton = {
+                                navController.popBackStack()
+                            }
+                        )
 
                     }
                 }

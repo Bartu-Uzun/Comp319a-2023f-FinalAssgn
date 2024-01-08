@@ -25,22 +25,23 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.havanasiapp.R
 import com.example.havanasiapp.domain.model.response.CurrentWeather
 import com.example.havanasiapp.presentation.home.components.AddNewCityDialogComponent
 import com.example.havanasiapp.presentation.home.components.NormalTextComponent
 import com.example.havanasiapp.presentation.home.components.WeatherLocationsLazyComponent
 import com.example.havanasiapp.presentation.util.ScreenState
-import com.example.havanasiapp.ui.theme.HavaNasiAppTheme
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun HomeScreen(
     screenState: ScreenState,
+    responseEvents: Flow<HomeViewModel.ResponseEvent>,
     isAddNewCityDialogVisible: Boolean,
     cityToAddName: String,
     addingErrorMessage: String,
@@ -49,11 +50,30 @@ fun HomeScreen(
     currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
     onClickDelete: (CurrentWeather) -> Unit,
+    onClickWeatherCard: (CurrentWeather) -> Unit,
     onSubmitNewCity: () -> Unit,
     onFloatingButtonClicked: () -> Unit,
     onDismissDialogRequest: () -> Unit,
     onRetry: () -> Unit,
+    onNavigateToDetailScreen: (String) -> Unit,
 ) {
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = context) {
+
+        responseEvents.collect {event ->
+
+            when(event) {
+
+                is HomeViewModel.ResponseEvent.NavigateToDetailScreen -> {
+
+                    onNavigateToDetailScreen(event.cityName)
+                }
+            }
+
+        }
+
+    }
 
     when (screenState) {
 
@@ -75,6 +95,7 @@ fun HomeScreen(
                 currentWeatherList = currentWeatherList,
                 onCityToAddChange = onCityToAddChange,
                 onClickDelete = onClickDelete,
+                onClickWeatherCard = onClickWeatherCard,
                 onSubmitNewCity = onSubmitNewCity,
                 onFloatingButtonClicked = onFloatingButtonClicked,
                 onDismissDialogRequest = onDismissDialogRequest,
@@ -220,6 +241,7 @@ fun SuccessScreen(
     currentWeatherList: List<CurrentWeather>,
     onCityToAddChange: (String) -> Unit,
     onClickDelete: (CurrentWeather) -> Unit,
+    onClickWeatherCard: (CurrentWeather) -> Unit,
     onSubmitNewCity: () -> Unit,
     onFloatingButtonClicked: () -> Unit,
     onDismissDialogRequest: () -> Unit,
@@ -279,7 +301,8 @@ fun SuccessScreen(
             Column {
                 WeatherLocationsLazyComponent(
                     currentWeatherList = currentWeatherList,
-                    onClickDelete = onClickDelete
+                    onClickDelete = onClickDelete,
+                    onClickWeatherCard = onClickWeatherCard,
                 )
 
                 if (isAddNewCityDialogVisible) {
@@ -303,7 +326,7 @@ fun SuccessScreen(
 
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun SuccessScreenPreview() {
@@ -314,6 +337,7 @@ fun SuccessScreenPreview() {
             isAddNewCityDialogVisible = false,
             cityToAddName = "",
             onClickDelete = {},
+            onClickWeatherCard = {},
             onRetry = {},
             onFloatingButtonClicked = {},
             onDismissDialogRequest = {},
@@ -327,7 +351,9 @@ fun SuccessScreenPreview() {
     }
 }
 
+ */
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun LoadingScreenPreview() {
@@ -338,6 +364,7 @@ fun LoadingScreenPreview() {
             isAddNewCityDialogVisible = true,
             cityToAddName = "",
             onClickDelete = {},
+            onClickWeatherCard = {},
             onRetry = {},
             onFloatingButtonClicked = {},
             onDismissDialogRequest = {},
@@ -347,7 +374,9 @@ fun LoadingScreenPreview() {
             addingErrorMessage = "",
             isAddingNameError = false,
             isConnectionError = false,
+            responseEvents = ,
 
         )
     }
 }
+*/

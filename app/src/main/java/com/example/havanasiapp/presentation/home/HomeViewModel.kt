@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
                 // TODO apiden current location'ın bilgisini çek
 
 
-                // TODO apiden citylerin bilgisini çek
+                // apiden citylerin bilgisini çek
                 cityNameList.forEach { cityName: String ->
 
                     val currentWeather: CurrentWeather = weatherRepository.getCurrentWeatherOfCity(cityName)
@@ -56,7 +56,7 @@ class HomeViewModel @Inject constructor(
                     currentWeatherList.add(currentWeather)
                 }
 
-                _state.value = state.value.copy( // TODO FOR NOW
+                _state.value = state.value.copy(
                     currentWeatherList = currentWeatherList.toList(),
                     cityNameList = cityNameList,
                     isAddCityDialogVisible = false,
