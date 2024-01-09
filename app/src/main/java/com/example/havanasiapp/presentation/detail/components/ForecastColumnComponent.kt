@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,13 +26,15 @@ import com.example.havanasiapp.ui.theme.HavaNasiAppTheme
 import com.example.havanasiapp.util.Utils
 
 @Composable
-fun ForecastLazyComponent(
+fun ForecastColumnComponent(
     forecastdayList: List<Forecastday>,
     modifier: Modifier = Modifier,
 ) {
 
-    LazyColumn {
-        items(forecastdayList) {forecastDay: Forecastday ->
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        forecastdayList.forEach {forecastDay: Forecastday ->
 
             forecastCard(
                 dayOfWeek = Utils.getDayOfWeek(forecastDay.date),
@@ -42,10 +42,8 @@ fun ForecastLazyComponent(
                 maxtemp = forecastDay.day.maxtemp_c,
                 mintemp = forecastDay.day.mintemp_c,
             )
-
         }
     }
-
 }
 
 @Composable
@@ -58,11 +56,11 @@ fun forecastCard(
 ) {
     Card(
         modifier = modifier
-            .padding(16.dp)
+            .padding(top = 16.dp, bottom = 16.dp)
             .clip(RoundedCornerShape(size = 8.dp)),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -122,7 +120,7 @@ fun forecastCard(
     }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun forecastCardPreview() {
@@ -136,3 +134,5 @@ fun forecastCardPreview() {
         )
     }
 }
+
+ */

@@ -195,7 +195,7 @@ fun LoadingScreen() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
                         NormalTextComponent(
-                            value = "Hava Nası\'?",
+                            value = "Hava Nası\' ?",
                             fontWeight = FontWeight.Bold,
                             fontSize = 36,
                             color = MaterialTheme.colorScheme.onSecondaryContainer

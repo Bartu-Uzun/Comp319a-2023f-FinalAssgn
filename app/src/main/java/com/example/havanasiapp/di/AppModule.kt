@@ -45,18 +45,6 @@ object AppModule {
         return CityRepositoryImpl(db.cityDao)
     }
 
-    /*
-    @Provides
-    @Singleton
-    fun provideWeatherApi(): WeatherApiService {
-        return Retrofit.Builder()
-            .addConverterFactory(Json.asConverterFactory(Constants.contentType))
-            .baseUrl(Constants.BASE_URL)
-            .build()
-            .create(WeatherApiService::class.java)
-    }
-    */
-
     @Provides
     @Singleton
     fun provideWeatherApi(): WeatherApiService {

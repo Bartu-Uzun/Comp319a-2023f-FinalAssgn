@@ -2,6 +2,7 @@ package com.example.havanasiapp.presentation.home.components
 
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -78,7 +79,7 @@ fun currentWeatherCard(
             ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -87,6 +88,9 @@ fun currentWeatherCard(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer
+                )
         ){
             Row(
                 modifier = modifier
@@ -162,6 +166,9 @@ fun currentWeatherCard(
 fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
 
     ) {
 
@@ -176,7 +183,7 @@ fun WeatherIconCard(photoSrc: String, modifier: Modifier = Modifier) {
         )
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun LocationCardPreview() {
@@ -189,3 +196,5 @@ fun LocationCardPreview() {
         )
     }
 }
+
+ */
