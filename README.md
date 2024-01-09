@@ -4,8 +4,8 @@ Hava Nası' App
 ## Students Info
 Name: Bartu Uzun Student ID: 72735 Email: buzun19@ku.edu.tr
 Name: Ayten Dilara Yavuz ID: 72281 Email: ayavuz19@ku.edu.tr
-Name: Ufuk Ertürk ID: Email: merturk19@ku.edu.tr
-Name: Arda Adalar ID: Email: Aadalar20@ku.edu.tr
+Name: Ufuk Ertürk ID: 71743 Email: merturk19@ku.edu.tr
+Name: Arda Adalar ID: 76188 Email: aadalar20@ku.edu.tr
 
 ## How to Use
 
