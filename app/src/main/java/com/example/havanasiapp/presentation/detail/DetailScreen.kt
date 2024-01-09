@@ -208,11 +208,10 @@ fun SuccessScreen(
 
                     LazyRow() {
 
-                        val currentHour = LocalTime.now().hour
 
                         val todayForeCastHourList: List<Hour> =
                             weatherForecast.forecast.forecastday[0].hour.filter { hour: Hour ->
-                                Utils.getHourValue(hour) >= currentHour
+                                Utils.getLocalTimeHour(hour.time) >= Utils.getLocalTimeHour(weatherForecast.current.last_updated)
                             }
 
 
@@ -403,7 +402,7 @@ fun ForeCastDayCard(hour: Hour) {
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             NormalTextComponent(
-                value = Utils.getHourValue(hour).toString(),
+                value = Utils.getLocalTimeHour(hour.time).toString(),
                 fontSize = 18
             )
 

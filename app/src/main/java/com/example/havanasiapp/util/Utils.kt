@@ -10,19 +10,17 @@ import java.util.Locale
 object Utils {
 
 
-     fun getHourValue(hour: Hour): Int {
-
-        return LocalDateTime.parse(
-            hour.time,
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        ).hour
-
-    }
-
     fun getDayOfWeek(date: String): String {
         return LocalDate.parse(
             date,
             DateTimeFormatter.ofPattern("yyyy-MM-dd")
         ).dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+    }
+
+    fun getLocalTimeHour(date: String): Int {
+        return LocalDateTime.parse(
+            date,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        ).hour
     }
 }
